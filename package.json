@@ -1,0 +1,70 @@
+{
+    "name": "careerglyph",
+    "private": true,
+    "description": "Dynamic developer profiles with AI-powered insights",
+    "version": "0.1.0",
+    "workspaces": [
+        "apps/*",
+        "packages/*",
+        "tools/*"
+    ],
+    "scripts": {
+        "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+        "dev:frontend": "npm run dev --workspace=@careerglyph/frontend",
+        "dev:backend": "npm run dev --workspace=@careerglyph/backend",
+        "build": "npm run build --workspaces",
+        "build:frontend": "npm run build --workspace=@careerglyph/frontend",
+        "build:backend": "npm run build --workspace=@careerglyph/backend",
+        "test": "npm run test --workspaces",
+        "test:watch": "npm run test:watch --workspaces",
+        "test:e2e": "npm run test:e2e --workspace=@careerglyph/frontend",
+        "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+        "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+        "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+        "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+        "typecheck": "npm run typecheck --workspaces",
+        "clean": "rm -rf node_modules && rm -rf apps/*/node_modules && rm -rf packages/*/node_modules",
+        "db:migrate": "npm run db:migrate --workspace=@careerglyph/backend",
+        "db:seed": "npm run db:seed --workspace=@careerglyph/backend",
+        "db:reset": "npm run db:reset --workspace=@careerglyph/backend",
+        "docker:up": "docker-compose up -d",
+        "docker:down": "docker-compose down",
+        "prepare": "husky install"
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.0",
+        "@typescript-eslint/eslint-plugin": "^6.13.0",
+        "@typescript-eslint/parser": "^6.13.0",
+        "concurrently": "^8.2.2",
+        "eslint": "^8.54.0",
+        "eslint-config-prettier": "^9.0.0",
+        "eslint-plugin-import": "^2.29.0",
+        "eslint-plugin-jsx-a11y": "^6.8.0",
+        "eslint-plugin-react": "^7.33.2",
+        "eslint-plugin-react-hooks": "^4.6.0",
+        "husky": "^8.0.3",
+        "lint-staged": "^15.2.0",
+        "prettier": "^3.1.0",
+        "turbo": "^1.11.0",
+        "typescript": "^5.3.0"
+    },
+    "lint-staged": {
+        "*.{ts,tsx,js,jsx}": [
+            "eslint --fix",
+            "prettier --write"
+        ],
+        "*.{json,md}": [
+            "prettier --write"
+        ]
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Shailesh93602/CareerGlyph.git"
+    },
+    "author": "Shailesh Chaudhari",
+    "license": "MIT",
+    "engines": {
+        "node": ">=18.0.0",
+        "npm": ">=9.0.0"
+    }
+}

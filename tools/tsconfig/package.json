@@ -1,0 +1,9 @@
+{
+    "name": "@careerglyph/tsconfig",
+    "version": "0.1.0",
+    "description": "Shared TypeScript configurations for CareerGlyph",
+    "main": "index.js",
+    "files": [
+        "*.json"
+    ]
+}

@@ -1,0 +1,21 @@
+{
+  "extends": ["../../tools/tsconfig/nestjs.json"],
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "paths": {
+      "@/*": ["src/*"],
+      "@/auth/*": ["src/auth/*"],
+      "@/profile/*": ["src/profile/*"],
+      "@/project/*": ["src/project/*"],
+      "@/ai/*": ["src/ai/*"],
+      "@/integrations/*": ["src/integrations/*"],
+      "@/common/*": ["src/common/*"],
+      "@/database/*": ["src/database/*"],
+      "@careerglyph/shared": ["../../packages/shared/src"],
+      "@careerglyph/utils": ["../../packages/utils/src"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "test"]
+}
