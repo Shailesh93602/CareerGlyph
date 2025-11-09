@@ -8,7 +8,7 @@
 
 **Version:** 1.0.0 MVP  **Version:** 1.0.0 MVP  
 
-**Team:** Shailesh Chaudhary  **Team:** Shailesh Chaudhary  
+**Team:** Shailesh Chaudhari  **Team:** Shailesh Chaudhari 
 
 **Project Type:** Full-Stack TypeScript Monorepo**Project Type:** Full-Stack TypeScript Monorepo
 
@@ -347,7 +347,7 @@ System imports repos → AI builds first draft profile.
 ## Team & Resources
 
 ### Current Team
-- **Shailesh Chaudhary**: Full-stack developer, project lead, product strategy
+- **Shailesh Chaudhari**: Full-stack developer, project lead, product strategy
 
 ### Technology Requirements
 - **Development Tools**: VS Code, Git, Docker, Figma for design

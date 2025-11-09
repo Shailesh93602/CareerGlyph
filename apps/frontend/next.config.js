@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    experimental: {
-        appDir: true,
-    },
     images: {
         domains: [
             'github.com',
@@ -17,12 +14,16 @@ const nextConfig = {
         BACKEND_URL: process.env.BACKEND_URL,
     },
     async rewrites() {
-        return [
-            {
-                source: '/api/:path*',
-                destination: `${process.env.BACKEND_URL}/api/:path*`,
-            },
-        ];
+        // Only add rewrites if BACKEND_URL is defined
+        if (process.env.BACKEND_URL) {
+            return [
+                {
+                    source: '/api/:path*',
+                    destination: `${process.env.BACKEND_URL}/api/:path*`,
+                },
+            ];
+        }
+        return [];
     },
     webpack: (config, { isServer }) => {
         if (!isServer) {

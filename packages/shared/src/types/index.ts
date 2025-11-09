@@ -1,3 +1,11 @@
+import {
+  SkillCategory,
+  SkillLevel,
+  ProjectCategory,
+  ProjectStatus,
+  SocialPlatform,
+} from '../enums/index';
+
 // User and Authentication Types
 export interface User {
   id: string;

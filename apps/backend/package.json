@@ -2,7 +2,7 @@
     "name": "@careerglyph/backend",
     "version": "0.1.0",
     "description": "CareerGlyph backend API built with NestJS",
-    "author": "Shailesh Chaudhary",
+    "author": "Shailesh Chaudhari",
     "private": true,
     "license": "MIT",
     "scripts": {
