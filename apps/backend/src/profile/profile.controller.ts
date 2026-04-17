@@ -7,6 +7,11 @@ import { ProfileService } from './profile.service';
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
+  @Get('health')
+  getHealth(): string {
+    return this.profileService.getHealth();
+  }
+
   @Get(':username')
   @ApiOperation({ summary: 'Get a developer profile by username' })
   @ApiParam({ name: 'username', example: 'shailesh93602' })
@@ -14,10 +19,5 @@ export class ProfileController {
   @ApiResponse({ status: 404, description: 'Developer not found or profile is private' })
   getProfile(@Param('username') username: string) {
     return this.profileService.getByUsername(username);
-  }
-
-  @Get('health')
-  getHealth(): string {
-    return this.profileService.getHealth();
   }
 }

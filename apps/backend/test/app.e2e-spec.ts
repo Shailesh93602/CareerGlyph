@@ -158,19 +158,15 @@ describe('App (e2e)', () => {
   });
 
   // ─── GET /api/v1/profile/health ───────────────────────────────────────────
-  // NOTE: @Get(':username') is declared before @Get('health') in the controller,
-  // so /profile/health hits the :username route with username='health'.
-  // The @Get('health') handler is unreachable at runtime.
-  // Fix: declare @Get('health') before @Get(':username') in ProfileController.
-  // This test documents the current behavior (treats 'health' as a username lookup).
 
   describe('GET /api/v1/profile/health', () => {
-    it('returns 404 because :username route shadows the health handler', async () => {
-      mockPrisma.developer.findUnique.mockResolvedValue(null);
-
+    it('returns 200 with profile health message', async () => {
       return request(app.getHttpServer())
         .get('/api/v1/profile/health')
-        .expect(404);
+        .expect(200)
+        .expect((res) => {
+          expect(res.text).toBe('Profile service is running');
+        });
     });
   });
 });
