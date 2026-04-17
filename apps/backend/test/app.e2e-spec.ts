@@ -1,0 +1,176 @@
+/**
+ * E2E integration tests using a slim test module that replaces PrismaService
+ * with a mock and omits BullModule/AiModule/IntegrationsModule to avoid
+ * external service connections (Redis, MongoDB, AWS) during tests.
+ */
+import { Test, TestingModule } from '@nestjs/testing';
+import { INestApplication, Module, ValidationPipe } from '@nestjs/common';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import request = require('supertest');
+import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from '../src/auth/auth.module';
+import { ProfileModule } from '../src/profile/profile.module';
+import { DatabaseModule } from '../src/database/database.module';
+import { PrismaService } from '../src/database/prisma.service';
+
+// ─── Slim test module (no Bull / Mongo / AI / Integrations) ──────────────────
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    DatabaseModule,
+    AuthModule,
+    ProfileModule,
+  ],
+})
+class TestAppModule {}
+
+// ─── Mock Prisma factory ──────────────────────────────────────────────────────
+
+const buildMockDeveloper = (overrides: Record<string, any> = {}) => ({
+  id: 'dev-1',
+  username: 'shailesh',
+  name: 'Shailesh Chaudhari',
+  bio: 'Software Engineer',
+  avatarUrl: null,
+  location: 'Gujarat, India',
+  websiteUrl: null,
+  githubLogin: 'shailesh93602',
+  linkedinUrl: null,
+  isPublic: true,
+  createdAt: new Date('2024-01-01T00:00:00Z'),
+  updatedAt: new Date('2024-01-01T00:00:00Z'),
+  skills: [],
+  projects: [],
+  ...overrides,
+});
+
+// ─── Tests ────────────────────────────────────────────────────────────────────
+
+describe('App (e2e)', () => {
+  let app: INestApplication;
+
+  const mockPrisma = {
+    developer: { findUnique: jest.fn() },
+    $connect: jest.fn().mockResolvedValue(undefined),
+    $disconnect: jest.fn().mockResolvedValue(undefined),
+  };
+
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [TestAppModule],
+    })
+      .overrideProvider(PrismaService)
+      .useValue(mockPrisma)
+      .compile();
+
+    app = moduleFixture.createNestApplication();
+    app.setGlobalPrefix('api/v1');
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
+    await app.init();
+  });
+
+  afterAll(async () => {
+    await app.close();
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  // ─── GET /api/v1/profile/:username ────────────────────────────────────────
+
+  describe('GET /api/v1/profile/:username', () => {
+    it('returns 200 with profile for a public developer', async () => {
+      mockPrisma.developer.findUnique.mockResolvedValue(buildMockDeveloper());
+
+      return request(app.getHttpServer())
+        .get('/api/v1/profile/shailesh')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.username).toBe('shailesh');
+          expect(res.body.name).toBe('Shailesh Chaudhari');
+        });
+    });
+
+    it('strips internal fields from response', async () => {
+      mockPrisma.developer.findUnique.mockResolvedValue(buildMockDeveloper());
+
+      return request(app.getHttpServer())
+        .get('/api/v1/profile/shailesh')
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.isPublic).toBeUndefined();
+          expect(res.body.id).toBeUndefined();
+        });
+    });
+
+    it('returns 404 for a private profile', async () => {
+      mockPrisma.developer.findUnique.mockResolvedValue(
+        buildMockDeveloper({ isPublic: false }),
+      );
+
+      return request(app.getHttpServer())
+        .get('/api/v1/profile/shailesh')
+        .expect(404);
+    });
+
+    it('returns 404 for an unknown username', async () => {
+      mockPrisma.developer.findUnique.mockResolvedValue(null);
+
+      return request(app.getHttpServer())
+        .get('/api/v1/profile/does-not-exist')
+        .expect(404);
+    });
+
+    it('returns profile with skills and projects arrays', async () => {
+      mockPrisma.developer.findUnique.mockResolvedValue(
+        buildMockDeveloper({ skills: [], projects: [] }),
+      );
+
+      return request(app.getHttpServer())
+        .get('/api/v1/profile/shailesh')
+        .expect(200)
+        .expect((res) => {
+          expect(Array.isArray(res.body.skills)).toBe(true);
+          expect(Array.isArray(res.body.projects)).toBe(true);
+        });
+    });
+  });
+
+  // ─── GET /api/v1/auth/health ──────────────────────────────────────────────
+
+  describe('GET /api/v1/auth/health', () => {
+    it('returns 200 with health message', async () => {
+      return request(app.getHttpServer())
+        .get('/api/v1/auth/health')
+        .expect(200)
+        .expect((res) => {
+          expect(res.text).toBe('Auth service is running');
+        });
+    });
+  });
+
+  // ─── GET /api/v1/profile/health ───────────────────────────────────────────
+  // NOTE: @Get(':username') is declared before @Get('health') in the controller,
+  // so /profile/health hits the :username route with username='health'.
+  // The @Get('health') handler is unreachable at runtime.
+  // Fix: declare @Get('health') before @Get(':username') in ProfileController.
+  // This test documents the current behavior (treats 'health' as a username lookup).
+
+  describe('GET /api/v1/profile/health', () => {
+    it('returns 404 because :username route shadows the health handler', async () => {
+      mockPrisma.developer.findUnique.mockResolvedValue(null);
+
+      return request(app.getHttpServer())
+        .get('/api/v1/profile/health')
+        .expect(404);
+    });
+  });
+});
