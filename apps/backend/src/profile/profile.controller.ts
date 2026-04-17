@@ -1,9 +1,20 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProfileService } from './profile.service';
 
+@ApiTags('profile')
 @Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
+
+  @Get(':username')
+  @ApiOperation({ summary: 'Get a developer profile by username' })
+  @ApiParam({ name: 'username', example: 'shailesh93602' })
+  @ApiResponse({ status: 200, description: 'Profile found' })
+  @ApiResponse({ status: 404, description: 'Developer not found or profile is private' })
+  getProfile(@Param('username') username: string) {
+    return this.profileService.getByUsername(username);
+  }
 
   @Get('health')
   getHealth(): string {

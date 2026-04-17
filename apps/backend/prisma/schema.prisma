@@ -1,0 +1,107 @@
+// CareerGlyph — Prisma schema
+// DB: PostgreSQL (local via docker-compose, production on Supabase/Neon)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Developer ───────────────────────────────────────────────────────────────
+
+model Developer {
+  id          String   @id @default(cuid())
+  username    String   @unique
+  email       String   @unique
+  name        String
+  bio         String?
+  avatarUrl   String?
+  location    String?
+  websiteUrl  String?
+  githubLogin String?  @unique
+  linkedinUrl String?
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  skills       Skill[]
+  projects     Project[]
+  endorsements Endorsement[] @relation("EndorsementReceiver")
+  given        Endorsement[] @relation("EndorsementGiver")
+
+  @@map("developers")
+}
+
+// ─── Skill ───────────────────────────────────────────────────────────────────
+
+model Skill {
+  id          String      @id @default(cuid())
+  name        String
+  category    SkillCategory
+  level       SkillLevel  @default(INTERMEDIATE)
+  yearsExp    Int?
+  developerId String
+  developer   Developer   @relation(fields: [developerId], references: [id], onDelete: Cascade)
+  createdAt   DateTime    @default(now())
+
+  endorsements Endorsement[]
+
+  @@unique([developerId, name])
+  @@map("skills")
+}
+
+enum SkillCategory {
+  LANGUAGE
+  FRAMEWORK
+  DATABASE
+  TOOL
+  CLOUD
+  OTHER
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+// ─── Project ─────────────────────────────────────────────────────────────────
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  techStack   String[] // e.g. ["NestJS", "PostgreSQL", "Redis"]
+  githubUrl   String?
+  liveUrl     String?
+  isHighlight Boolean  @default(false)
+  developerId String
+  developer   Developer @relation(fields: [developerId], references: [id], onDelete: Cascade)
+  startedAt   DateTime?
+  endedAt     DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("projects")
+}
+
+// ─── Endorsement ─────────────────────────────────────────────────────────────
+
+model Endorsement {
+  id          String    @id @default(cuid())
+  skillId     String
+  skill       Skill     @relation(fields: [skillId], references: [id], onDelete: Cascade)
+  receiverId  String
+  receiver    Developer @relation("EndorsementReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  giverId     String
+  giver       Developer @relation("EndorsementGiver", fields: [giverId], references: [id], onDelete: Cascade)
+  message     String?
+  createdAt   DateTime  @default(now())
+
+  @@unique([skillId, giverId]) // one endorsement per skill per giver
+  @@map("endorsements")
+}
