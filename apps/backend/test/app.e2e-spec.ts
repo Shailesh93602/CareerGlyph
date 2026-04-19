@@ -31,6 +31,8 @@ const buildMockDeveloper = (overrides: Record<string, any> = {}) => ({
   id: 'dev-1',
   username: 'shailesh',
   name: 'Shailesh Chaudhari',
+  email: 'shailesh@example.com',
+  password: '$2a$10$hashedpasswordplaceholder',
   bio: 'Software Engineer',
   avatarUrl: null,
   location: 'Gujarat, India',
@@ -51,7 +53,11 @@ describe('App (e2e)', () => {
   let app: INestApplication;
 
   const mockPrisma = {
-    developer: { findUnique: jest.fn() },
+    developer: {
+      findUnique: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+    },
     $connect: jest.fn().mockResolvedValue(undefined),
     $disconnect: jest.fn().mockResolvedValue(undefined),
   };
@@ -167,6 +173,91 @@ describe('App (e2e)', () => {
         .expect((res) => {
           expect(res.text).toBe('Profile service is running');
         });
+    });
+  });
+
+  // ─── POST /api/v1/auth/register ──────────────────────────────────────────
+
+  describe('POST /api/v1/auth/register', () => {
+    it('returns 201 with accessToken on valid registration', async () => {
+      mockPrisma.developer.findUnique.mockResolvedValue(null); // email not taken
+      mockPrisma.developer.create.mockResolvedValue(
+        buildMockDeveloper({ email: 'test@example.com', password: 'hashed' }),
+      );
+
+      return request(app.getHttpServer())
+        .post('/api/v1/auth/register')
+        .send({
+          username: 'testuser',
+          name: 'Test User',
+          email: 'test@example.com',
+          password: 'password123',
+        })
+        .expect(201)
+        .expect((res) => {
+          expect(res.body.accessToken).toBeDefined();
+          expect(res.body.username).toBe('shailesh');
+        });
+    });
+
+    it('returns 409 when email already registered', async () => {
+      mockPrisma.developer.findUnique.mockResolvedValue(
+        buildMockDeveloper({ email: 'taken@example.com' }),
+      );
+
+      return request(app.getHttpServer())
+        .post('/api/v1/auth/register')
+        .send({
+          username: 'other',
+          name: 'Other',
+          email: 'taken@example.com',
+          password: 'password123',
+        })
+        .expect(409);
+    });
+
+    it('returns 400 when password is too short', async () => {
+      return request(app.getHttpServer())
+        .post('/api/v1/auth/register')
+        .send({
+          username: 'testuser',
+          name: 'Test User',
+          email: 'test@example.com',
+          password: 'short',
+        })
+        .expect(400);
+    });
+
+    it('returns 400 when email is invalid', async () => {
+      return request(app.getHttpServer())
+        .post('/api/v1/auth/register')
+        .send({
+          username: 'testuser',
+          name: 'Test User',
+          email: 'not-an-email',
+          password: 'password123',
+        })
+        .expect(400);
+    });
+  });
+
+  // ─── POST /api/v1/auth/login ──────────────────────────────────────────────
+
+  describe('POST /api/v1/auth/login', () => {
+    it('returns 401 for nonexistent email', async () => {
+      mockPrisma.developer.findUnique.mockResolvedValue(null);
+
+      return request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({ email: 'nope@example.com', password: 'wrong' })
+        .expect(401);
+    });
+
+    it('returns 400 for missing fields', async () => {
+      return request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({ email: 'test@example.com' })
+        .expect(400);
     });
   });
 });

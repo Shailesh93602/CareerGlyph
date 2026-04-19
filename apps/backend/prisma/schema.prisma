@@ -21,6 +21,7 @@ model Developer {
   avatarUrl   String?
   location    String?
   websiteUrl  String?
+  password    String
   githubLogin String?  @unique
   linkedinUrl String?
   isPublic    Boolean  @default(true)
