@@ -67,10 +67,10 @@ describe('ProfileController', () => {
 
     it('propagates NotFoundException from service', async () => {
       service.getByUsername.mockRejectedValue(
-        new NotFoundException('Developer @unknown not found'),
+        new NotFoundException('Developer @unknown not found')
       );
       await expect(controller.getProfile('unknown')).rejects.toThrow(
-        NotFoundException,
+        NotFoundException
       );
     });
   });
@@ -92,15 +92,20 @@ describe('ProfileController', () => {
     it('calls service.updateProfile with the authenticated user id and dto', async () => {
       const dto = { name: 'Updated Name', bio: 'Updated bio' };
       service.updateProfile.mockResolvedValue(mockProfile as any);
-      const result = await controller.updateProfile(fakeReq('dev-1') as any, dto as any);
+      const result = await controller.updateProfile(
+        fakeReq('dev-1') as any,
+        dto as any
+      );
       expect(service.updateProfile).toHaveBeenCalledWith('dev-1', dto);
       expect(result).toEqual(mockProfile);
     });
 
     it('propagates NotFoundException when developer is not found', async () => {
-      service.updateProfile.mockRejectedValue(new NotFoundException('Developer not found'));
+      service.updateProfile.mockRejectedValue(
+        new NotFoundException('Developer not found')
+      );
       await expect(
-        controller.updateProfile(fakeReq('dev-1') as any, {} as any),
+        controller.updateProfile(fakeReq('dev-1') as any, {} as any)
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -109,8 +114,17 @@ describe('ProfileController', () => {
 
   describe('addSkill', () => {
     it('calls service.addSkill with user id and dto', async () => {
-      const dto = { name: 'Redis', category: 'DATABASE' as any, level: 'ADVANCED' as any };
-      const created = { id: 'skill-new', ...dto, developerId: 'dev-1', yearsExp: null };
+      const dto = {
+        name: 'Redis',
+        category: 'DATABASE' as any,
+        level: 'ADVANCED' as any,
+      };
+      const created = {
+        id: 'skill-new',
+        ...dto,
+        developerId: 'dev-1',
+        yearsExp: null,
+      };
       service.addSkill.mockResolvedValue(created as any);
 
       const result = await controller.addSkill(fakeReq('dev-1') as any, dto);
@@ -129,9 +143,11 @@ describe('ProfileController', () => {
     });
 
     it('propagates NotFoundException from service', async () => {
-      service.removeSkill.mockRejectedValue(new NotFoundException('Skill not found'));
+      service.removeSkill.mockRejectedValue(
+        new NotFoundException('Skill not found')
+      );
       await expect(
-        controller.removeSkill(fakeReq('dev-1') as any, 'ghost-skill'),
+        controller.removeSkill(fakeReq('dev-1') as any, 'ghost-skill')
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -140,11 +156,23 @@ describe('ProfileController', () => {
 
   describe('addProject', () => {
     it('calls service.addProject with user id and dto', async () => {
-      const dto = { title: 'EduScale', description: 'Real-time platform', techStack: ['NestJS'] };
-      const created = { id: 'proj-new', ...dto, developerId: 'dev-1', isHighlight: false };
+      const dto = {
+        title: 'EduScale',
+        description: 'Real-time platform',
+        techStack: ['NestJS'],
+      };
+      const created = {
+        id: 'proj-new',
+        ...dto,
+        developerId: 'dev-1',
+        isHighlight: false,
+      };
       service.addProject.mockResolvedValue(created as any);
 
-      const result = await controller.addProject(fakeReq('dev-1') as any, dto as any);
+      const result = await controller.addProject(
+        fakeReq('dev-1') as any,
+        dto as any
+      );
       expect(service.addProject).toHaveBeenCalledWith('dev-1', dto);
       expect(result).toEqual(created);
     });
@@ -160,9 +188,11 @@ describe('ProfileController', () => {
     });
 
     it('propagates NotFoundException from service', async () => {
-      service.removeProject.mockRejectedValue(new NotFoundException('Project not found'));
+      service.removeProject.mockRejectedValue(
+        new NotFoundException('Project not found')
+      );
       await expect(
-        controller.removeProject(fakeReq('dev-1') as any, 'ghost-proj'),
+        controller.removeProject(fakeReq('dev-1') as any, 'ghost-proj')
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -175,24 +205,34 @@ describe('ProfileController', () => {
       const upserted = { id: 'end-new', skillId: 'skill-1', giverId: 'dev-1' };
       service.endorseSkill.mockResolvedValue(upserted as any);
 
-      const result = await controller.endorseSkill(fakeReq('dev-1') as any, 'skill-1', dto);
-      expect(service.endorseSkill).toHaveBeenCalledWith('dev-1', 'skill-1', dto);
+      const result = await controller.endorseSkill(
+        fakeReq('dev-1') as any,
+        'skill-1',
+        dto
+      );
+      expect(service.endorseSkill).toHaveBeenCalledWith(
+        'dev-1',
+        'skill-1',
+        dto
+      );
       expect(result).toEqual(upserted);
     });
 
     it('propagates BadRequestException when endorsing own skill', async () => {
       service.endorseSkill.mockRejectedValue(
-        new BadRequestException('Cannot endorse your own skill'),
+        new BadRequestException('Cannot endorse your own skill')
       );
       await expect(
-        controller.endorseSkill(fakeReq('dev-1') as any, 'skill-1', {}),
+        controller.endorseSkill(fakeReq('dev-1') as any, 'skill-1', {})
       ).rejects.toThrow(BadRequestException);
     });
 
     it('propagates NotFoundException when skill does not exist', async () => {
-      service.endorseSkill.mockRejectedValue(new NotFoundException('Skill not found'));
+      service.endorseSkill.mockRejectedValue(
+        new NotFoundException('Skill not found')
+      );
       await expect(
-        controller.endorseSkill(fakeReq('dev-1') as any, 'ghost-skill', {}),
+        controller.endorseSkill(fakeReq('dev-1') as any, 'ghost-skill', {})
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -203,13 +243,18 @@ describe('ProfileController', () => {
     it('calls service.removeEndorsement with giver id and skillId', async () => {
       service.removeEndorsement.mockResolvedValue(undefined);
       await controller.removeEndorsement(fakeReq('dev-1') as any, 'skill-1');
-      expect(service.removeEndorsement).toHaveBeenCalledWith('dev-1', 'skill-1');
+      expect(service.removeEndorsement).toHaveBeenCalledWith(
+        'dev-1',
+        'skill-1'
+      );
     });
 
     it('propagates NotFoundException when endorsement does not exist', async () => {
-      service.removeEndorsement.mockRejectedValue(new NotFoundException('Endorsement not found'));
+      service.removeEndorsement.mockRejectedValue(
+        new NotFoundException('Endorsement not found')
+      );
       await expect(
-        controller.removeEndorsement(fakeReq('dev-1') as any, 'ghost-skill'),
+        controller.removeEndorsement(fakeReq('dev-1') as any, 'ghost-skill')
       ).rejects.toThrow(NotFoundException);
     });
   });

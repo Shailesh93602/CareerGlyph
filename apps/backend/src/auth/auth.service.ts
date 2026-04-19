@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../database/prisma.service';
@@ -11,7 +15,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {}
 
   async register(dto: RegisterDto) {
@@ -50,10 +54,7 @@ export class AuthService {
   }
 
   private signToken(sub: string, username: string): string {
-    return this.jwtService.sign(
-      { sub, username },
-      { expiresIn: '7d' },
-    );
+    return this.jwtService.sign({ sub, username }, { expiresIn: '7d' });
   }
 
   getHealth(): string {

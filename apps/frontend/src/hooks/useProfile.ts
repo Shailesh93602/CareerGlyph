@@ -15,7 +15,7 @@ export function useProfile(username: string) {
     {
       retry: 1,
       staleTime: 1000 * 60 * 5, // 5 min
-    },
+    }
   );
 }
 
@@ -24,7 +24,10 @@ export function useEndorseSkill(username: string) {
 
   return useMutation(
     async ({ skillId, message }: { skillId: string; message?: string }) => {
-      const res = await api.post(`/profile/${username}/skills/${skillId}/endorse`, { message });
+      const res = await api.post(
+        `/profile/${username}/skills/${skillId}/endorse`,
+        { message }
+      );
       return res.data;
     },
     {
@@ -36,10 +39,10 @@ export function useEndorseSkill(username: string) {
         if (prev) {
           queryClient.setQueryData<Profile>(['profile', username], {
             ...prev,
-            skills: prev.skills.map((s) =>
+            skills: prev.skills.map(s =>
               s.id === skillId
                 ? { ...s, endorsementCount: s.endorsementCount + 1 }
-                : s,
+                : s
             ),
           });
         }
@@ -56,7 +59,7 @@ export function useEndorseSkill(username: string) {
         queryClient.invalidateQueries(['profile', username]);
         toast.success('Skill endorsed');
       },
-    },
+    }
   );
 }
 
@@ -75,6 +78,6 @@ export function useRemoveEndorsement(username: string) {
       onError: () => {
         toast.error('Could not remove endorsement');
       },
-    },
+    }
   );
 }

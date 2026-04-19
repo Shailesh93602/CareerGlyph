@@ -1,4 +1,4 @@
 export declare class ProfileService {
-    getHealth(): string;
+  getHealth(): string;
 }
 //# sourceMappingURL=profile.service.d.ts.map

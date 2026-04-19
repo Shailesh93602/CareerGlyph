@@ -2,8 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { MapPin, Globe, Github, Linkedin, Calendar, Award, Code2, ExternalLink } from 'lucide-react';
-import { useProfile, useEndorseSkill, useRemoveEndorsement } from '@/hooks/useProfile';
+import {
+  MapPin,
+  Globe,
+  Github,
+  Linkedin,
+  Calendar,
+  Award,
+  Code2,
+  ExternalLink,
+} from 'lucide-react';
+import {
+  useProfile,
+  useEndorseSkill,
+  useRemoveEndorsement,
+} from '@/hooks/useProfile';
 import { getStoredUser } from '@/lib/auth';
 import type { Skill, Project, SkillLevel } from '@/types/profile';
 
@@ -16,7 +29,10 @@ const LEVEL_COLORS: Record<SkillLevel, string> = {
 
 function formatDate(iso: string | null): string {
   if (!iso) return '';
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  return new Date(iso).toLocaleDateString('en-US', {
+    month: 'short',
+    year: 'numeric',
+  });
 }
 
 function SkillCard({
@@ -34,7 +50,7 @@ function SkillCard({
 
   const isOwnProfile = viewerUsername === profileUsername;
   const alreadyEndorsed = viewerUsername
-    ? skill.endorsedBy.some((e) => e.username === viewerUsername)
+    ? skill.endorsedBy.some(e => e.username === viewerUsername)
     : false;
 
   return (
@@ -42,15 +58,23 @@ function SkillCard({
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="font-semibold text-gray-900 truncate">{skill.name}</span>
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${LEVEL_COLORS[skill.level]}`}>
+            <span className="font-semibold text-gray-900 truncate">
+              {skill.name}
+            </span>
+            <span
+              className={`text-xs px-2 py-0.5 rounded-full font-medium ${LEVEL_COLORS[skill.level]}`}
+            >
               {skill.level.charAt(0) + skill.level.slice(1).toLowerCase()}
             </span>
             {skill.yearsExp != null && (
-              <span className="text-xs text-gray-400">{skill.yearsExp}y exp</span>
+              <span className="text-xs text-gray-400">
+                {skill.yearsExp}y exp
+              </span>
             )}
           </div>
-          <span className="text-xs text-gray-400 mt-0.5 block">{skill.category}</span>
+          <span className="text-xs text-gray-400 mt-0.5 block">
+            {skill.category}
+          </span>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
@@ -63,8 +87,9 @@ function SkillCard({
               {skill.endorsementCount}
             </button>
           )}
-          {viewerUsername && !isOwnProfile && (
-            alreadyEndorsed ? (
+          {viewerUsername &&
+            !isOwnProfile &&
+            (alreadyEndorsed ? (
               <button
                 onClick={() => removeEndorsement.mutate(skill.id)}
                 disabled={removeEndorsement.isLoading}
@@ -80,22 +105,25 @@ function SkillCard({
               >
                 Endorse
               </button>
-            )
-          )}
+            ))}
         </div>
       </div>
 
       {expanded && skill.endorsedBy.length > 0 && (
         <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
-          {skill.endorsedBy.map((endorser) => (
+          {skill.endorsedBy.map(endorser => (
             <div key={endorser.username} className="flex items-start gap-2">
               <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center shrink-0 text-xs font-medium text-blue-700">
                 {endorser.name.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0">
-                <span className="text-sm font-medium text-gray-700">@{endorser.username}</span>
+                <span className="text-sm font-medium text-gray-700">
+                  @{endorser.username}
+                </span>
                 {endorser.message && (
-                  <p className="text-xs text-gray-500 mt-0.5 italic">"{endorser.message}"</p>
+                  <p className="text-xs text-gray-500 mt-0.5 italic">
+                    "{endorser.message}"
+                  </p>
                 )}
               </div>
             </div>
@@ -108,7 +136,9 @@ function SkillCard({
 
 function ProjectCard({ project }: { project: Project }) {
   return (
-    <div className={`bg-white border rounded-lg p-5 hover:shadow-md transition-shadow ${project.isHighlight ? 'border-blue-300 ring-1 ring-blue-100' : 'border-gray-200'}`}>
+    <div
+      className={`bg-white border rounded-lg p-5 hover:shadow-md transition-shadow ${project.isHighlight ? 'border-blue-300 ring-1 ring-blue-100' : 'border-gray-200'}`}
+    >
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -119,7 +149,9 @@ function ProjectCard({ project }: { project: Project }) {
               </span>
             )}
           </div>
-          <p className="text-sm text-gray-600 mt-1 leading-relaxed">{project.description}</p>
+          <p className="text-sm text-gray-600 mt-1 leading-relaxed">
+            {project.description}
+          </p>
         </div>
         <div className="flex gap-2 shrink-0">
           {project.githubUrl && (
@@ -149,8 +181,11 @@ function ProjectCard({ project }: { project: Project }) {
 
       {project.techStack.length > 0 && (
         <div className="flex flex-wrap gap-1.5 mt-3">
-          {project.techStack.map((tech) => (
-            <span key={tech} className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-mono">
+          {project.techStack.map(tech => (
+            <span
+              key={tech}
+              className="text-xs px-2 py-0.5 bg-gray-100 text-gray-600 rounded font-mono"
+            >
               {tech}
             </span>
           ))}
@@ -182,7 +217,9 @@ export default function ProfilePage() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-pulse text-gray-400 text-lg">Loading profile…</div>
+        <div className="animate-pulse text-gray-400 text-lg">
+          Loading profile…
+        </div>
       </div>
     );
   }
@@ -191,20 +228,27 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-2xl font-semibold text-gray-700">@{username} not found</p>
-          <p className="text-gray-500 mt-2">This profile doesn't exist or is private.</p>
+          <p className="text-2xl font-semibold text-gray-700">
+            @{username} not found
+          </p>
+          <p className="text-gray-500 mt-2">
+            This profile doesn't exist or is private.
+          </p>
         </div>
       </div>
     );
   }
 
-  const categorized = profile.skills.reduce<Record<string, Skill[]>>((acc, s) => {
-    (acc[s.category] ??= []).push(s);
-    return acc;
-  }, {});
+  const categorized = profile.skills.reduce<Record<string, Skill[]>>(
+    (acc, s) => {
+      (acc[s.category] ??= []).push(s);
+      return acc;
+    },
+    {}
+  );
 
-  const highlightProjects = profile.projects.filter((p) => p.isHighlight);
-  const otherProjects = profile.projects.filter((p) => !p.isHighlight);
+  const highlightProjects = profile.projects.filter(p => p.isHighlight);
+  const otherProjects = profile.projects.filter(p => !p.isHighlight);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -227,10 +271,14 @@ export default function ProfilePage() {
             )}
 
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-bold text-gray-900">{profile.name}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {profile.name}
+              </h1>
               <p className="text-blue-600 font-medium">@{profile.username}</p>
               {profile.bio && (
-                <p className="text-gray-600 mt-2 leading-relaxed">{profile.bio}</p>
+                <p className="text-gray-600 mt-2 leading-relaxed">
+                  {profile.bio}
+                </p>
               )}
 
               <div className="flex flex-wrap gap-4 mt-3 text-sm text-gray-500">
@@ -284,11 +332,15 @@ export default function ProfilePage() {
           {/* Stats row */}
           <div className="flex gap-6 mt-6 pt-6 border-t border-gray-100">
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">{profile.skills.length}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {profile.skills.length}
+              </p>
               <p className="text-xs text-gray-500">Skills</p>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold text-gray-900">{profile.projects.length}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                {profile.projects.length}
+              </p>
               <p className="text-xs text-gray-500">Projects</p>
             </div>
             <div className="text-center">
@@ -316,7 +368,7 @@ export default function ProfilePage() {
                     {category}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {skills.map((skill) => (
+                    {skills.map(skill => (
                       <SkillCard
                         key={skill.id}
                         skill={skill}
@@ -339,7 +391,7 @@ export default function ProfilePage() {
               Featured Projects
             </h2>
             <div className="grid grid-cols-1 gap-4">
-              {highlightProjects.map((project) => (
+              {highlightProjects.map(project => (
                 <ProjectCard key={project.id} project={project} />
               ))}
             </div>
@@ -354,7 +406,7 @@ export default function ProfilePage() {
               Other Projects
             </h2>
             <div className="grid grid-cols-1 gap-4">
-              {otherProjects.map((project) => (
+              {otherProjects.map(project => (
                 <ProjectCard key={project.id} project={project} />
               ))}
             </div>
@@ -363,7 +415,9 @@ export default function ProfilePage() {
 
         {profile.skills.length === 0 && profile.projects.length === 0 && (
           <div className="text-center py-16 text-gray-400">
-            <p className="text-lg">@{profile.username} hasn't added anything yet.</p>
+            <p className="text-lg">
+              @{profile.username} hasn't added anything yet.
+            </p>
           </div>
         )}
       </div>

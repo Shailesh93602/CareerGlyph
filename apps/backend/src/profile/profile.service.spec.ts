@@ -69,7 +69,11 @@ describe('ProfileService', () => {
     developer: { findUnique: jest.Mock; update: jest.Mock };
     skill: { create: jest.Mock; findUnique: jest.Mock; delete: jest.Mock };
     project: { create: jest.Mock; findUnique: jest.Mock; delete: jest.Mock };
-    endorsement: { upsert: jest.Mock; findUnique: jest.Mock; delete: jest.Mock };
+    endorsement: {
+      upsert: jest.Mock;
+      findUnique: jest.Mock;
+      delete: jest.Mock;
+    };
   };
 
   beforeEach(async () => {
@@ -77,7 +81,11 @@ describe('ProfileService', () => {
       developer: { findUnique: jest.fn(), update: jest.fn() },
       skill: { create: jest.fn(), findUnique: jest.fn(), delete: jest.fn() },
       project: { create: jest.fn(), findUnique: jest.fn(), delete: jest.fn() },
-      endorsement: { upsert: jest.fn(), findUnique: jest.fn(), delete: jest.fn() },
+      endorsement: {
+        upsert: jest.fn(),
+        findUnique: jest.fn(),
+        delete: jest.fn(),
+      },
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -108,14 +116,14 @@ describe('ProfileService', () => {
     it('throws NotFoundException when developer is not found', async () => {
       prismaMock.developer.findUnique.mockResolvedValue(null);
       await expect(service.getByUsername('ghost')).rejects.toThrow(
-        NotFoundException,
+        NotFoundException
       );
     });
 
     it('throws NotFoundException with username in message when not found', async () => {
       prismaMock.developer.findUnique.mockResolvedValue(null);
       await expect(service.getByUsername('ghost')).rejects.toThrow(
-        'Developer @ghost not found',
+        'Developer @ghost not found'
       );
     });
 
@@ -125,7 +133,7 @@ describe('ProfileService', () => {
         isPublic: false,
       });
       await expect(service.getByUsername('shailesh')).rejects.toThrow(
-        NotFoundException,
+        NotFoundException
       );
     });
 
@@ -133,7 +141,7 @@ describe('ProfileService', () => {
       prismaMock.developer.findUnique.mockResolvedValue(mockDeveloper);
       await service.getByUsername('shailesh');
       expect(prismaMock.developer.findUnique).toHaveBeenCalledWith(
-        expect.objectContaining({ where: { username: 'shailesh' } }),
+        expect.objectContaining({ where: { username: 'shailesh' } })
       );
     });
 
@@ -170,24 +178,24 @@ describe('ProfileService', () => {
     });
 
     it('maps skills with endorsementCount', () => {
-      const ts = result.skills.find((s) => s.name === 'TypeScript');
+      const ts = result.skills.find(s => s.name === 'TypeScript');
       expect(ts?.endorsementCount).toBe(1);
     });
 
     it('sets endorsementCount to 0 for skills with no endorsements', () => {
-      const react = result.skills.find((s) => s.name === 'React');
+      const react = result.skills.find(s => s.name === 'React');
       expect(react?.endorsementCount).toBe(0);
     });
 
     it('maps endorsedBy array per skill', () => {
-      const ts = result.skills.find((s) => s.name === 'TypeScript');
+      const ts = result.skills.find(s => s.name === 'TypeScript');
       expect(ts?.endorsedBy).toHaveLength(1);
       expect(ts?.endorsedBy[0].username).toBe('giver1');
       expect(ts?.endorsedBy[0].message).toBe('Great TypeScript skills');
     });
 
     it('endorsedBy is empty array for skills with no endorsements', () => {
-      const react = result.skills.find((s) => s.name === 'React');
+      const react = result.skills.find(s => s.name === 'React');
       expect(react?.endorsedBy).toEqual([]);
     });
 
@@ -202,8 +210,17 @@ describe('ProfileService', () => {
 
   describe('addSkill', () => {
     it('calls prisma.skill.create with developerId and dto fields', async () => {
-      const dto = { name: 'Redis', category: 'DATABASE' as any, level: 'ADVANCED' as any };
-      const created = { id: 'skill-new', ...dto, developerId: 'dev-1', yearsExp: null };
+      const dto = {
+        name: 'Redis',
+        category: 'DATABASE' as any,
+        level: 'ADVANCED' as any,
+      };
+      const created = {
+        id: 'skill-new',
+        ...dto,
+        developerId: 'dev-1',
+        yearsExp: null,
+      };
       prismaMock.skill.create.mockResolvedValue(created);
 
       const result = await service.addSkill('dev-1', dto);
@@ -221,22 +238,27 @@ describe('ProfileService', () => {
         developerId: 'other-dev',
       });
       await expect(service.removeSkill('dev-1', 'skill-1')).rejects.toThrow(
-        NotFoundException,
+        NotFoundException
       );
     });
 
     it('throws NotFoundException when skill does not exist', async () => {
       prismaMock.skill.findUnique.mockResolvedValue(null);
       await expect(service.removeSkill('dev-1', 'ghost-skill')).rejects.toThrow(
-        NotFoundException,
+        NotFoundException
       );
     });
 
     it('deletes the skill when it belongs to the developer', async () => {
-      prismaMock.skill.findUnique.mockResolvedValue({ id: 'skill-1', developerId: 'dev-1' });
+      prismaMock.skill.findUnique.mockResolvedValue({
+        id: 'skill-1',
+        developerId: 'dev-1',
+      });
       prismaMock.skill.delete.mockResolvedValue({});
       await service.removeSkill('dev-1', 'skill-1');
-      expect(prismaMock.skill.delete).toHaveBeenCalledWith({ where: { id: 'skill-1' } });
+      expect(prismaMock.skill.delete).toHaveBeenCalledWith({
+        where: { id: 'skill-1' },
+      });
     });
   });
 
@@ -249,12 +271,21 @@ describe('ProfileService', () => {
         description: 'Real-time platform',
         techStack: ['NestJS', 'Redis'],
       };
-      const created = { id: 'proj-new', ...dto, developerId: 'dev-1', isHighlight: false, startedAt: null };
+      const created = {
+        id: 'proj-new',
+        ...dto,
+        developerId: 'dev-1',
+        isHighlight: false,
+        startedAt: null,
+      };
       prismaMock.project.create.mockResolvedValue(created);
 
       const result = await service.addProject('dev-1', dto as any);
       expect(prismaMock.project.create).toHaveBeenCalledWith({
-        data: expect.objectContaining({ title: 'EduScale', developerId: 'dev-1' }),
+        data: expect.objectContaining({
+          title: 'EduScale',
+          developerId: 'dev-1',
+        }),
       });
       expect(result.id).toBe('proj-new');
     });
@@ -267,7 +298,7 @@ describe('ProfileService', () => {
         developerId: 'other-dev',
       });
       await expect(service.removeProject('dev-1', 'proj-1')).rejects.toThrow(
-        NotFoundException,
+        NotFoundException
       );
     });
   });
@@ -281,14 +312,14 @@ describe('ProfileService', () => {
         developerId: 'dev-1', // same as giverId
       });
       await expect(
-        service.endorseSkill('dev-1', 'skill-1', {}),
+        service.endorseSkill('dev-1', 'skill-1', {})
       ).rejects.toThrow(BadRequestException);
     });
 
     it('throws NotFoundException when skill does not exist', async () => {
       prismaMock.skill.findUnique.mockResolvedValue(null);
       await expect(
-        service.endorseSkill('dev-1', 'ghost-skill', {}),
+        service.endorseSkill('dev-1', 'ghost-skill', {})
       ).rejects.toThrow(NotFoundException);
     });
 
@@ -300,7 +331,9 @@ describe('ProfileService', () => {
       const upserted = { id: 'end-new', skillId: 'skill-1', giverId: 'dev-1' };
       prismaMock.endorsement.upsert.mockResolvedValue(upserted);
 
-      const result = await service.endorseSkill('dev-1', 'skill-1', { message: 'Great skill' });
+      const result = await service.endorseSkill('dev-1', 'skill-1', {
+        message: 'Great skill',
+      });
       expect(prismaMock.endorsement.upsert).toHaveBeenCalled();
       expect(result.id).toBe('end-new');
     });

@@ -18,7 +18,10 @@ import { DatabaseModule } from '../database/database.module';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.get<string>('JWT_SECRET', 'dev-secret-change-in-production'),
+        secret: config.get<string>(
+          'JWT_SECRET',
+          'dev-secret-change-in-production'
+        ),
         signOptions: { expiresIn: '7d' },
       }),
     }),

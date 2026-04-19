@@ -52,9 +52,16 @@ export default function RegisterPage() {
           <p className="text-gray-500 mt-2">Create your developer profile</p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+          className="space-y-5"
+        >
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Username
             </label>
             <div className="flex items-center">
@@ -77,12 +84,17 @@ export default function RegisterPage() {
               />
             </div>
             {errors.username && (
-              <p className="mt-1 text-sm text-red-600">{errors.username.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {errors.username.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Full name
             </label>
             <input
@@ -99,7 +111,10 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Email
             </label>
             <input
@@ -109,16 +124,24 @@ export default function RegisterPage() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               {...register('email', {
                 required: 'Email is required',
-                pattern: { value: /\S+@\S+\.\S+/, message: 'Enter a valid email' },
+                pattern: {
+                  value: /\S+@\S+\.\S+/,
+                  message: 'Enter a valid email',
+                },
               })}
             />
             {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {errors.email.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
               Password
             </label>
             <input
@@ -132,14 +155,18 @@ export default function RegisterPage() {
               })}
             />
             {errors.password && (
-              <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {errors.password.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-1">
-              Bio{' '}
-              <span className="text-gray-400 font-normal">(optional)</span>
+            <label
+              htmlFor="bio"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              Bio <span className="text-gray-400 font-normal">(optional)</span>
             </label>
             <textarea
               id="bio"
@@ -161,7 +188,10 @@ export default function RegisterPage() {
 
         <p className="mt-6 text-center text-sm text-gray-600">
           Already have an account?{' '}
-          <Link href="/login" className="text-blue-600 hover:underline font-medium">
+          <Link
+            href="/login"
+            className="text-blue-600 hover:underline font-medium"
+          >
             Sign in
           </Link>
         </p>

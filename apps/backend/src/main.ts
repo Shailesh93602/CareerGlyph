@@ -21,11 +21,13 @@ async function bootstrap() {
   });
 
   // Global validation pipe
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    })
+  );
 
   // API prefix
   app.setGlobalPrefix('api/v1');
@@ -43,14 +45,14 @@ async function bootstrap() {
       .addTag('ai', 'AI-powered features')
       .addTag('integrations', 'External integrations')
       .build();
-    
+
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('api/docs', app, document);
   }
 
   const port = process.env.PORT || 7777;
   await app.listen(port);
-  
+
   console.log(`🚀 CareerGlyph API running on: http://localhost:${port}`);
   console.log(`📚 API Documentation: http://localhost:${port}/api/docs`);
 }

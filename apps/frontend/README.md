@@ -4,11 +4,11 @@ Next.js 14 frontend for the CareerGlyph developer identity platform.
 
 ## Pages
 
-| Route | Description |
-|---|---|
-| `/` | Landing — hero, feature preview, CTA |
-| `/login` | Sign in with email + password |
-| `/register` | Create account (username, name, email, password, bio) |
+| Route         | Description                                            |
+| ------------- | ------------------------------------------------------ |
+| `/`           | Landing — hero, feature preview, CTA                   |
+| `/login`      | Sign in with email + password                          |
+| `/register`   | Create account (username, name, email, password, bio)  |
 | `/[username]` | Public profile viewer — skills, projects, endorsements |
 
 ## Running locally
@@ -24,9 +24,9 @@ npm run dev            # starts on :3000
 
 ## Environment variables
 
-| Variable | Required | Description |
-|---|---|---|
-| `NEXT_PUBLIC_API_URL` | Yes | Backend base URL, e.g. `http://localhost:3001` |
+| Variable              | Required | Description                                    |
+| --------------------- | -------- | ---------------------------------------------- |
+| `NEXT_PUBLIC_API_URL` | Yes      | Backend base URL, e.g. `http://localhost:3001` |
 
 ## Key patterns
 

@@ -42,7 +42,10 @@ describe('AuthService', () => {
         AuthService,
         { provide: PrismaService, useValue: prisma },
         { provide: JwtService, useValue: jwtService },
-        { provide: ConfigService, useValue: { get: jest.fn().mockReturnValue('dev-secret') } },
+        {
+          provide: ConfigService,
+          useValue: { get: jest.fn().mockReturnValue('dev-secret') },
+        },
       ],
     }).compile();
 
@@ -97,7 +100,10 @@ describe('AuthService', () => {
 
       const createCall = prisma.developer.create.mock.calls[0][0];
       expect(createCall.data.password).not.toBe('password123');
-      const valid = await bcrypt.compare('password123', createCall.data.password);
+      const valid = await bcrypt.compare(
+        'password123',
+        createCall.data.password
+      );
       expect(valid).toBe(true);
     });
 
@@ -110,7 +116,7 @@ describe('AuthService', () => {
           name: 'Other',
           email: 'shailesh@example.com',
           password: 'password123',
-        }),
+        })
       ).rejects.toThrow(ConflictException);
 
       expect(prisma.developer.create).not.toHaveBeenCalled();
@@ -122,7 +128,10 @@ describe('AuthService', () => {
   describe('login()', () => {
     it('returns accessToken for valid credentials', async () => {
       const hash = await bcrypt.hash('password123', 10);
-      prisma.developer.findUnique.mockResolvedValue({ ...mockDeveloper, password: hash });
+      prisma.developer.findUnique.mockResolvedValue({
+        ...mockDeveloper,
+        password: hash,
+      });
 
       const result = await service.login({
         email: 'shailesh@example.com',
@@ -137,16 +146,22 @@ describe('AuthService', () => {
       prisma.developer.findUnique.mockResolvedValue(null);
 
       await expect(
-        service.login({ email: 'nope@example.com', password: 'password123' }),
+        service.login({ email: 'nope@example.com', password: 'password123' })
       ).rejects.toThrow(UnauthorizedException);
     });
 
     it('throws UnauthorizedException for wrong password', async () => {
       const hash = await bcrypt.hash('correct-password', 10);
-      prisma.developer.findUnique.mockResolvedValue({ ...mockDeveloper, password: hash });
+      prisma.developer.findUnique.mockResolvedValue({
+        ...mockDeveloper,
+        password: hash,
+      });
 
       await expect(
-        service.login({ email: 'shailesh@example.com', password: 'wrong-password' }),
+        service.login({
+          email: 'shailesh@example.com',
+          password: 'wrong-password',
+        })
       ).rejects.toThrow(UnauthorizedException);
     });
   });

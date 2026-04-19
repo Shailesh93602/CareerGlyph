@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import { CreateSkillDto } from './dto/create-skill.dto';
@@ -17,7 +21,9 @@ export class ProfileService {
           include: {
             endorsements: {
               include: {
-                giver: { select: { username: true, name: true, avatarUrl: true } },
+                giver: {
+                  select: { username: true, name: true, avatarUrl: true },
+                },
               },
               orderBy: { createdAt: 'desc' },
             },
@@ -42,7 +48,17 @@ export class ProfileService {
     const developer = await this.prisma.developer.findUnique({
       where: { id },
       include: {
-        skills: { include: { endorsements: { include: { giver: { select: { username: true, name: true, avatarUrl: true } } } } } },
+        skills: {
+          include: {
+            endorsements: {
+              include: {
+                giver: {
+                  select: { username: true, name: true, avatarUrl: true },
+                },
+              },
+            },
+          },
+        },
         projects: { orderBy: [{ isHighlight: 'desc' }, { startedAt: 'desc' }] },
       },
     });
@@ -63,7 +79,9 @@ export class ProfileService {
   }
 
   async removeSkill(developerId: string, skillId: string) {
-    const skill = await this.prisma.skill.findUnique({ where: { id: skillId } });
+    const skill = await this.prisma.skill.findUnique({
+      where: { id: skillId },
+    });
     if (skill?.developerId !== developerId) {
       throw new NotFoundException('Skill not found');
     }
@@ -83,7 +101,9 @@ export class ProfileService {
   }
 
   async removeProject(developerId: string, projectId: string) {
-    const project = await this.prisma.project.findUnique({ where: { id: projectId } });
+    const project = await this.prisma.project.findUnique({
+      where: { id: projectId },
+    });
     if (project?.developerId !== developerId) {
       throw new NotFoundException('Project not found');
     }
@@ -93,7 +113,9 @@ export class ProfileService {
   // ─── Endorsements ──────────────────────────────────────────────────────────
 
   async endorseSkill(giverId: string, skillId: string, dto: EndorseSkillDto) {
-    const skill = await this.prisma.skill.findUnique({ where: { id: skillId } });
+    const skill = await this.prisma.skill.findUnique({
+      where: { id: skillId },
+    });
     if (!skill) throw new NotFoundException('Skill not found');
     if (skill.developerId === giverId) {
       throw new BadRequestException('Cannot endorse your own skill');
@@ -102,7 +124,12 @@ export class ProfileService {
     return this.prisma.endorsement.upsert({
       where: { skillId_giverId: { skillId, giverId } },
       update: { message: dto.message },
-      create: { skillId, giverId, receiverId: skill.developerId, message: dto.message },
+      create: {
+        skillId,
+        giverId,
+        receiverId: skill.developerId,
+        message: dto.message,
+      },
     });
   }
 

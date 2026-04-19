@@ -77,7 +77,7 @@ describe('App (e2e)', () => {
         whitelist: true,
         forbidNonWhitelisted: true,
         transform: true,
-      }),
+      })
     );
     await app.init();
   });
@@ -99,7 +99,7 @@ describe('App (e2e)', () => {
       return request(app.getHttpServer())
         .get('/api/v1/profile/shailesh')
         .expect(200)
-        .expect((res) => {
+        .expect(res => {
           expect(res.body.username).toBe('shailesh');
           expect(res.body.name).toBe('Shailesh Chaudhari');
         });
@@ -111,7 +111,7 @@ describe('App (e2e)', () => {
       return request(app.getHttpServer())
         .get('/api/v1/profile/shailesh')
         .expect(200)
-        .expect((res) => {
+        .expect(res => {
           expect(res.body.isPublic).toBeUndefined();
           expect(res.body.id).toBeUndefined();
         });
@@ -119,7 +119,7 @@ describe('App (e2e)', () => {
 
     it('returns 404 for a private profile', async () => {
       mockPrisma.developer.findUnique.mockResolvedValue(
-        buildMockDeveloper({ isPublic: false }),
+        buildMockDeveloper({ isPublic: false })
       );
 
       return request(app.getHttpServer())
@@ -137,13 +137,13 @@ describe('App (e2e)', () => {
 
     it('returns profile with skills and projects arrays', async () => {
       mockPrisma.developer.findUnique.mockResolvedValue(
-        buildMockDeveloper({ skills: [], projects: [] }),
+        buildMockDeveloper({ skills: [], projects: [] })
       );
 
       return request(app.getHttpServer())
         .get('/api/v1/profile/shailesh')
         .expect(200)
-        .expect((res) => {
+        .expect(res => {
           expect(Array.isArray(res.body.skills)).toBe(true);
           expect(Array.isArray(res.body.projects)).toBe(true);
         });
@@ -157,7 +157,7 @@ describe('App (e2e)', () => {
       return request(app.getHttpServer())
         .get('/api/v1/auth/health')
         .expect(200)
-        .expect((res) => {
+        .expect(res => {
           expect(res.text).toBe('Auth service is running');
         });
     });
@@ -170,7 +170,7 @@ describe('App (e2e)', () => {
       return request(app.getHttpServer())
         .get('/api/v1/profile/health')
         .expect(200)
-        .expect((res) => {
+        .expect(res => {
           expect(res.text).toBe('Profile service is running');
         });
     });
@@ -182,7 +182,7 @@ describe('App (e2e)', () => {
     it('returns 201 with accessToken on valid registration', async () => {
       mockPrisma.developer.findUnique.mockResolvedValue(null); // email not taken
       mockPrisma.developer.create.mockResolvedValue(
-        buildMockDeveloper({ email: 'test@example.com', password: 'hashed' }),
+        buildMockDeveloper({ email: 'test@example.com', password: 'hashed' })
       );
 
       return request(app.getHttpServer())
@@ -194,7 +194,7 @@ describe('App (e2e)', () => {
           password: 'password123',
         })
         .expect(201)
-        .expect((res) => {
+        .expect(res => {
           expect(res.body.accessToken).toBeDefined();
           expect(res.body.username).toBe('shailesh');
         });
@@ -202,7 +202,7 @@ describe('App (e2e)', () => {
 
     it('returns 409 when email already registered', async () => {
       mockPrisma.developer.findUnique.mockResolvedValue(
-        buildMockDeveloper({ email: 'taken@example.com' }),
+        buildMockDeveloper({ email: 'taken@example.com' })
       );
 
       return request(app.getHttpServer())

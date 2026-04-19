@@ -8,12 +8,15 @@ import { PrismaService } from '../database/prisma.service';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly prisma: PrismaService,
-    configService: ConfigService,
+    configService: ConfigService
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get<string>('JWT_SECRET', 'dev-secret-change-in-production'),
+      secretOrKey: configService.get<string>(
+        'JWT_SECRET',
+        'dev-secret-change-in-production'
+      ),
     });
   }
 

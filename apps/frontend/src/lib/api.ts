@@ -8,7 +8,7 @@ export const api = axios.create({
 });
 
 // Attach JWT on every request
-api.interceptors.request.use((config) => {
+api.interceptors.request.use(config => {
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem('cg_token');
     if (token) {
@@ -20,12 +20,12 @@ api.interceptors.request.use((config) => {
 
 // On 401 clear stale token
 api.interceptors.response.use(
-  (res) => res,
-  (err) => {
+  res => res,
+  err => {
     if (err.response?.status === 401 && typeof window !== 'undefined') {
       localStorage.removeItem('cg_token');
       localStorage.removeItem('cg_user');
     }
     return Promise.reject(err);
-  },
+  }
 );

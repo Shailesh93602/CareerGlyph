@@ -11,7 +11,7 @@
   html {
     font-family: var(--font-inter);
   }
-  
+
   code {
     font-family: var(--font-jetbrains-mono);
   }
@@ -21,15 +21,15 @@
   .btn {
     @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
   }
-  
+
   .btn-primary {
     @apply btn bg-primary-600 text-white hover:bg-primary-700;
   }
-  
+
   .btn-secondary {
     @apply btn bg-secondary-200 text-secondary-900 hover:bg-secondary-300;
   }
-  
+
   .btn-outline {
     @apply btn border border-input bg-background hover:bg-accent hover:text-accent-foreground;
   }
@@ -39,7 +39,7 @@
   .animate-fade-in {
     animation: fadeIn 0.5s ease-in-out;
   }
-  
+
   .animate-slide-up {
     animation: slideUp 0.3s ease-out;
   }

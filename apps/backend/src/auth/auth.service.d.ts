@@ -1,4 +1,4 @@
 export declare class AuthService {
-    getHealth(): string;
+  getHealth(): string;
 }
 //# sourceMappingURL=auth.service.d.ts.map

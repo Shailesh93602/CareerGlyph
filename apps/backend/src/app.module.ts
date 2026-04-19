@@ -16,10 +16,12 @@ import { DatabaseModule } from './database/database.module';
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
     }),
-    ThrottlerModule.forRoot([{
-      ttl: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 60000,
-      limit: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 10,
-    }]),
+    ThrottlerModule.forRoot([
+      {
+        ttl: parseInt(process.env.RATE_LIMIT_WINDOW_MS) || 60000,
+        limit: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) || 10,
+      },
+    ]),
     ScheduleModule.forRoot(),
     BullModule.forRoot({
       redis: {

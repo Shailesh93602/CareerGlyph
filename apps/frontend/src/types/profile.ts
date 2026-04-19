@@ -1,5 +1,11 @@
 export type SkillLevel = 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT';
-export type SkillCategory = 'LANGUAGE' | 'FRAMEWORK' | 'DATABASE' | 'TOOL' | 'CLOUD' | 'OTHER';
+export type SkillCategory =
+  | 'LANGUAGE'
+  | 'FRAMEWORK'
+  | 'DATABASE'
+  | 'TOOL'
+  | 'CLOUD'
+  | 'OTHER';
 
 export interface Endorser {
   username: string;

@@ -16,7 +16,14 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: 'CareerGlyph - Your Dynamic Developer Profile',
   description: 'Your skills, projects, and impact — not just a PDF.',
-  keywords: ['developer', 'portfolio', 'resume', 'career', 'skills', 'projects'],
+  keywords: [
+    'developer',
+    'portfolio',
+    'resume',
+    'career',
+    'skills',
+    'projects',
+  ],
   authors: [{ name: 'Shailesh Chaudhary' }],
   creator: 'CareerGlyph',
   metadataBase: new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000'),
@@ -47,9 +54,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
       <body className="min-h-screen bg-gray-50 text-gray-900 antialiased">
-        <Providers>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
