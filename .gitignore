@@ -108,3 +108,6 @@ uploads/
 
 # AWS
 .aws/
+
+# Quality audit artifact — kept local
+quality.md
